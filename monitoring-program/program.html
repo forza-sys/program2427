@@ -27,10 +27,90 @@
     }
     .cat-tab-btn.active {
       background: #10b981;
-      color: #ffffff;
       border-color: #10b981;
+      color: #ffffff;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
+
+    /* Modern KPI Cards */
+    .kpi-strip {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-bottom: 24px;
+    }
+    .kpi-modern {
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+    .kpi-modern.primary {
+      background: #0056e3;
+      color: white;
+      border: none;
+    }
+    .kpi-modern.secondary {
+      background: white;
+      border: 1.5px solid #f1f5f9;
+      color: #1e293b;
+    }
+    .kpi-modern-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .kpi-modern-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .kpi-modern.secondary .kpi-modern-title {
+      color: #475569;
+    }
+    .kpi-modern.primary .kpi-modern-title {
+      color: rgba(255,255,255,0.9);
+    }
+    .kpi-modern-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .kpi-modern.primary .kpi-modern-icon {
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+    }
+    .kpi-modern.secondary .kpi-modern-icon {
+      border: 1px solid #e2e8f0;
+      color: #94a3b8;
+    }
+    .kpi-modern-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .kpi-modern.secondary .kpi-modern-value {
+      color: #1e1b4b; /* Very dark blue */
+    }
+    .kpi-modern-sub {
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+    .kpi-modern.primary .kpi-modern-sub {
+      color: rgba(255,255,255,0.8);
+    }
+    .kpi-modern.secondary .kpi-modern-sub {
+      color: #94a3b8;
+    }
+
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -93,31 +173,52 @@
       </div>
 
       <!-- KPI Overview Strip -->
-      <div class="kpi-strip" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px;">
-        <div class="kpi-card blue">
-          <div class="kpi-label">Total Program</div>
-          <div class="kpi-value" id="kpi-total-proker">0</div>
-          <div class="kpi-sub">Program Kerja Terdaftar</div>
+      <div class="kpi-strip">
+        <div class="kpi-modern primary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Total Program</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-folder-open"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-total-proker">0</div>
+          <div class="kpi-modern-sub" style="display: flex; align-items: center; gap: 6px;">
+            <span style="background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; font-weight: 600;"><i class="ph-light ph-arrows-clockwise"></i> Update</span> Data terkini
+          </div>
         </div>
-        <div class="kpi-card green">
-          <div class="kpi-label">Selesai / Berjalan</div>
-          <div class="kpi-value" id="kpi-selesai-proker">0</div>
-          <div class="kpi-sub" id="kpi-selesai-pct">0% dari total</div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Selesai / Berjalan</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-check-circle"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-selesai-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-selesai-pct">0% dari total</div>
         </div>
-        <div class="kpi-card teal">
-          <div class="kpi-label">On Process</div>
-          <div class="kpi-value" id="kpi-process-proker">0</div>
-          <div class="kpi-sub" id="kpi-process-pct">0% dari total</div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">On Process</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-spinner-gap"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-process-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-process-pct">0% dari total</div>
         </div>
-        <div class="kpi-card amber">
-          <div class="kpi-label">Direncanakan</div>
-          <div class="kpi-value" id="kpi-rencana-proker">0</div>
-          <div class="kpi-sub" id="kpi-rencana-pct">0% dari total</div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Direncanakan</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-calendar-blank"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-rencana-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-rencana-pct">0% dari total</div>
         </div>
-        <div class="kpi-card purple">
-          <div class="kpi-label">Rata-rata Capaian</div>
-          <div class="kpi-value" id="kpi-avg-progress">0%</div>
-          <div class="kpi-sub">Persentase Keseluruhan</div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Rata-rata Capaian</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-trend-up"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-avg-progress">0%</div>
+          <div class="kpi-modern-sub" style="color: #10b981; font-weight: 600;">Persentase Keseluruhan</div>
         </div>
       </div>
 
