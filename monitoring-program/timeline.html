@@ -102,11 +102,11 @@
       letter-spacing: 1px;
     }
     .gantt-header-top.terlaksana {
-      background: #2563eb; /* Blue for Sudah Terlaksana */
+      background: #10b981; /* Green for Sudah Terlaksana */
       border-radius: 8px 0 0 0;
     }
     .gantt-header-top.belum {
-      background: #3b82f6; /* Lighter Blue for Belum Terlaksana */
+      background: #34d399; /* Lighter Green for Belum Terlaksana */
       border-radius: 0 8px 0 0;
     }
     .gantt-header-month {
@@ -149,9 +149,9 @@
       z-index: 20;
     }
     .gantt-event-card.terlaksana {
-      background: #e0e7ff;
-      border-left: 4px solid #6366f1;
-      color: #3730a3;
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      color: #065f46;
     }
     .gantt-event-card.akan {
       background: #f1f5f9;
@@ -235,16 +235,12 @@
             <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a;">Legend:</div>
             <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
               <div class="legend-item">
-                <span style="width: 12px; height: 12px; background: #8b5cf6; transform: rotate(45deg); display: inline-block;"></span>
-                <span>Sudah Terlaksana (Single Event)</span>
+                <span style="width: 20px; height: 14px; background: #d1fae5; border-left: 4px solid #10b981; border-radius: 2px; display: inline-block;"></span>
+                <span>Sudah Terlaksana</span>
               </div>
               <div class="legend-item">
-                <span style="width: 12px; height: 12px; background: #3b82f6; transform: rotate(45deg); display: inline-block;"></span>
-                <span>Akan Dilaksanakan (Single Event)</span>
-              </div>
-              <div class="legend-item">
-                <span style="width: 24px; height: 8px; background: rgba(59, 130, 246, 0.2); border: 1.5px solid #3b82f6; border-radius: 4px; display: inline-block;"></span>
-                <span>Program Rentang Waktu (Multi-Bulan)</span>
+                <span style="width: 20px; height: 14px; background: #f1f5f9; border-left: 4px solid #94a3b8; border-radius: 2px; display: inline-block;"></span>
+                <span>Belum Terlaksana / Akan Datang</span>
               </div>
             </div>
           </div>
