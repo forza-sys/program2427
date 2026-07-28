@@ -89,6 +89,7 @@
       position: relative;
       background: #ffffff;
       min-width: 1400px;
+      align-content: start; /* Prevents rows from stretching unnecessarily */
     }
     .gantt-header-top {
       display: flex;
@@ -121,14 +122,14 @@
     .gantt-cell {
       border-right: 1px dashed #e2e8f0;
       border-bottom: 1px solid #f8fafc;
-      min-height: 54px;
+      min-height: 64px; /* Make the grid row slightly taller */
     }
     .gantt-event-card {
       border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 0.75rem;
+      padding: 14px 12px; /* Increased padding to make the card thicker */
+      font-size: 0.8rem;
       font-weight: 700;
-      margin: 6px 4px;
+      margin: 8px 4px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       cursor: pointer;
       overflow: hidden;
@@ -137,6 +138,10 @@
       position: relative;
       z-index: 10;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      height: calc(100% - 16px);
+      box-sizing: border-box;
     }
     .gantt-event-card:hover {
       transform: translateY(-2px);
