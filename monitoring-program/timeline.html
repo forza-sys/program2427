@@ -127,21 +127,23 @@
     .gantt-event-card {
       border-radius: 6px;
       padding: 14px 12px; /* Increased padding to make the card thicker */
-      font-size: 0.8rem;
+      font-size: 0.95rem; /* Larger font size */
       font-weight: 700;
       margin: 8px 4px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       cursor: pointer;
       overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      /* Remove nowrap to allow multiline */
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* Max 3 lines */
+      -webkit-box-orient: vertical;
       position: relative;
       z-index: 10;
       transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
       height: calc(100% - 16px);
       box-sizing: border-box;
+      line-height: 1.4;
     }
     .gantt-event-card:hover {
       transform: translateY(-2px);
@@ -250,6 +252,6 @@
   </main>
 
   <script src="../sidebar.js"></script>
-  <script src="./timeline.js?v=6"></script>
+  <script src="./timeline.js?v=7"></script>
 </body>
 </html>
