@@ -221,9 +221,9 @@
     });
 
     // 4. Build HTML
-    // Set grid columns (160px per month) and rows
+    // Set grid columns (320px per month) and rows
     const totalRows = rows.length + 2;
-    ganttContainer.style.gridTemplateColumns = `repeat(${nodeCount}, 160px)`;
+    ganttContainer.style.gridTemplateColumns = `repeat(${nodeCount}, 320px)`;
     ganttContainer.style.gridTemplateRows = `40px 40px repeat(${rows.length}, minmax(54px, auto))`;
 
     let html = '';
