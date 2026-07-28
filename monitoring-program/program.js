@@ -245,7 +245,7 @@
   function renderCharts(filteredData) {
     // 1. Status Donut Chart
     const statusCounts = {
-      'Selesai/Berjalan': 0,
+      'Selesai': 0,
       'On Process': 0,
       'Direncanakan': 0,
       'Belum Terdefinisi': 0
@@ -253,7 +253,7 @@
 
     filteredData.forEach(p => {
       const st = p.status.toLowerCase();
-      if (st.includes('selesai') || st.includes('berjalan')) statusCounts['Selesai/Berjalan']++;
+      if (st.includes('selesai') || st.includes('berjalan')) statusCounts['Selesai']++;
       else if (st.includes('process') || st.includes('proses')) statusCounts['On Process']++;
       else if (st.includes('rencana') || st.includes('direncanakan')) statusCounts['Direncanakan']++;
       else statusCounts['Belum Terdefinisi']++;
