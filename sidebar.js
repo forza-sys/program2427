@@ -172,7 +172,14 @@
                         scripts.forEach(oldScript => {
                             if (oldScript.src && !oldScript.src.includes('sidebar.js') && !oldScript.src.includes('auth.js') && !oldScript.src.includes('supabase-config.js')) {
                                 // Only load script if it's not already in the document (avoids reloading Chart.js etc)
-                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js') || oldScript.src.includes('psak45.js') || oldScript.src.includes('nota-dinas.js')) {
+                                if (!existingScripts.includes(oldScript.src) || 
+                                    oldScript.src.includes('pendapatan-iuran.js') || 
+                                    oldScript.src.includes('kas-foz.js') || 
+                                    oldScript.src.includes('kas-komprehensif.js') || 
+                                    oldScript.src.includes('psak45.js') || 
+                                    oldScript.src.includes('nota-dinas.js') ||
+                                    oldScript.src.includes('program.js') ||
+                                    oldScript.src.includes('timeline.js')) {
                                     scriptsToLoad.push(oldScript.src);
                                 }
                             }
