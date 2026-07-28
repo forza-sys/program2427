@@ -235,27 +235,18 @@
       monthGroups[ev.renderStartIdx].push(ev);
     });
 
-    let heightTiers = [110, 160, 210, 130, 180, 230];
-    let tierIdx = 0;
+    const baseHeights = [110, 170, 230]; // 60px staggering for adjacent months
+    const stackStep = 180; // 3 * 60px = 180px stack step ensures perfect non-overlapping grid
 
     pointEvents.forEach(ev => {
       const mIdx = ev.renderStartIdx;
       const group = monthGroups[mIdx];
       const groupIdx = group.indexOf(ev);
-      const groupSize = group.length;
-
-      // Base percentage
+      
       let leftPct = (mIdx / (nodeCount - 1)) * 100;
       
-      // If multiple events on the exact same month, offset them horizontally slightly
-      if (groupSize > 1) {
-        // Offset by 1.5% for each item to separate their lines
-        const offsetPct = (groupIdx - (groupSize - 1) / 2) * 1.5;
-        leftPct += offsetPct;
-      }
-
-      const connectorHeight = heightTiers[tierIdx % heightTiers.length];
-      tierIdx++;
+      const baseTier = mIdx % 3;
+      const connectorHeight = baseHeights[baseTier] + (groupIdx * stackStep);
 
       const badgeCls = ev.isTerlaksana ? 'terlaksana' : 'akan';
 
