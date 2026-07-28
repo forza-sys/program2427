@@ -270,7 +270,8 @@
 
     // Dynamically adjust margin-top so tall stacks don't overflow
     const requiredMarginTop = Math.max(380, maxConnectorHeight + 80);
-    axisContainer.style.marginTop = requiredMarginTop + 'px';
+    const axisWrapper = document.getElementById('axis-wrapper');
+    if (axisWrapper) axisWrapper.style.marginTop = requiredMarginTop + 'px';
 
     // Range Events (Rendered Below Axis)
     const rangeEvents = filteredEvents.filter(e => e.isRange);
