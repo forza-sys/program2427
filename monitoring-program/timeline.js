@@ -235,8 +235,10 @@
       monthGroups[ev.renderStartIdx].push(ev);
     });
 
-    const baseHeights = [110, 170, 230]; // 60px staggering for adjacent months
-    const stackStep = 180; // 3 * 60px = 180px stack step ensures perfect non-overlapping grid
+    const baseHeights = [90, 140, 190]; // 50px staggering for adjacent months
+    const stackStep = 150; // 3 * 50px = 150px stack step ensures perfect non-overlapping grid
+
+    let maxConnectorHeight = 0;
 
     pointEvents.forEach(ev => {
       const mIdx = ev.renderStartIdx;
@@ -247,6 +249,10 @@
       
       const baseTier = mIdx % 3;
       const connectorHeight = baseHeights[baseTier] + (groupIdx * stackStep);
+
+      if (connectorHeight > maxConnectorHeight) {
+        maxConnectorHeight = connectorHeight;
+      }
 
       const badgeCls = ev.isTerlaksana ? 'terlaksana' : 'akan';
 
@@ -261,6 +267,10 @@
         </div>
       `;
     });
+
+    // Dynamically adjust margin-top so tall stacks don't overflow
+    const requiredMarginTop = Math.max(380, maxConnectorHeight + 80);
+    axisContainer.style.marginTop = requiredMarginTop + 'px';
 
     // Range Events (Rendered Below Axis)
     const rangeEvents = filteredEvents.filter(e => e.isRange);
