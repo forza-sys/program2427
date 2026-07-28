@@ -3,7 +3,6 @@
   const TIMELINE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPLWmWrZXEFFUxR6gmForZ-FgPCc1ePG_AxNRnac3RApPSPKi9oLH8AKGk3BdChAFZ5rbv6Mg2KQkd/pub?gid=1437698506&single=true&output=csv';
 
   let rawTimelineEvents = [];
-  let currentSelectedStatus = 'TERLAKSANA'; // TERLAKSANA, BELUM
 
   const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
@@ -123,177 +122,154 @@
         };
       }).filter(e => e.nama);
 
-      initTabEvents();
       renderDiagram();
     } catch (err) {
       console.error('Error loading diagram timeline data:', err);
     }
   }
 
-  function initTabEvents() {
-    document.querySelectorAll('.status-tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.status-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSelectedStatus = btn.getAttribute('data-status');
-
-        const activeDisplay = document.getElementById('active-status-display');
-        if (activeDisplay) {
-          if (currentSelectedStatus === 'ALL') activeDisplay.textContent = 'Semua Status';
-          else if (currentSelectedStatus === 'TERLAKSANA') activeDisplay.textContent = 'Sudah Terlaksana';
-          else if (currentSelectedStatus === 'BELUM') activeDisplay.textContent = 'Belum Terlaksana';
-        }
-
-        renderDiagram();
-      });
-    });
-  }
-
-  function getTimelineRange() {
-    // Generate absolute months list for the entire possible range
-    const allMonths = [];
-    for (let y = 2024; y <= 2027; y++) {
-      for (let m = 0; m < 12; m++) {
-        allMonths.push({
-          year: y,
-          month: m,
-          label: `${MONTH_NAMES[m]} '${y.toString().substring(2)}`,
-          absIndex: (y - 2024) * 12 + m
-        });
-      }
-    }
-
-    // Jul 2024 (idx 6) to Jun 2027 (idx 6+35 = 41)
-    let startIdx = 6;
-    let endIdx = 41;
-
-    if (currentSelectedStatus === 'TERLAKSANA') {
-      startIdx = 6;  // Jul 2024
-      endIdx = 30;   // Jul 2026
-    } else if (currentSelectedStatus === 'BELUM') {
-      startIdx = 30; // Jul 2026
-      endIdx = 41;   // Jun 2027
-    }
-
-    return allMonths.slice(startIdx, endIdx + 1);
-  }
-
   function renderDiagram() {
-    const axisContainer = document.getElementById('axis-nodes-container');
-    if (!axisContainer) return;
+    const ganttContainer = document.getElementById('gantt-container');
+    if (!ganttContainer) return;
 
-    // Determine Axis Range based on filter
-    const timelineMonths = getTimelineRange();
-    const nodeCount = timelineMonths.length;
-    const startAbs = timelineMonths[0].absIndex;
-    const endAbs = timelineMonths[nodeCount - 1].absIndex;
-
-    // Filter events by selected status and clamp them to view
-    let filteredEvents = rawTimelineEvents.filter(e => {
-      if (currentSelectedStatus === 'ALL') return true;
-      if (currentSelectedStatus === 'TERLAKSANA') return e.isTerlaksana;
-      if (currentSelectedStatus === 'BELUM') return !e.isTerlaksana;
-      return true;
+    // 1. Identify all active months (months that have events or are spanned by events)
+    const activeMonthAbsIndices = new Set();
+    rawTimelineEvents.forEach(e => {
+      const startAbs = (e.startYear - 2024) * 12 + e.startMonth;
+      const endAbs = (e.endYear - 2024) * 12 + e.endMonth;
+      for (let i = startAbs; i <= endAbs; i++) {
+        activeMonthAbsIndices.add(i);
+      }
     });
 
-    // Map events to current timeline axis indices
-    filteredEvents = filteredEvents.map(e => {
-      const eStartAbs = (e.startYear - 2024) * 12 + e.startMonth;
-      const eEndAbs = (e.endYear - 2024) * 12 + e.endMonth;
+    const sortedActiveAbsIndices = Array.from(activeMonthAbsIndices).sort((a,b) => a - b);
+    const nodeCount = sortedActiveAbsIndices.length;
+    if (nodeCount === 0) {
+      ganttContainer.innerHTML = '<div style="padding: 20px;">Belum ada data diagram.</div>';
+      return;
+    }
+
+    // Map absIndex to grid column index (1-based for CSS Grid)
+    const absToGridCol = {};
+    sortedActiveAbsIndices.forEach((abs, i) => {
+      absToGridCol[abs] = i + 1;
+    });
+
+    // 2. Determine the split point for "Sudah Terlaksana" vs "Belum Terlaksana"
+    // Find the first month that has a "Belum Terlaksana" event
+    let firstBelumAbs = Infinity;
+    rawTimelineEvents.forEach(e => {
+      if (!e.isTerlaksana) {
+        const startAbs = (e.startYear - 2024) * 12 + e.startMonth;
+        if (startAbs < firstBelumAbs) firstBelumAbs = startAbs;
+      }
+    });
+
+    let splitColIdx = nodeCount + 1; // Default to all Terlaksana
+    if (firstBelumAbs !== Infinity && absToGridCol[firstBelumAbs]) {
+      splitColIdx = absToGridCol[firstBelumAbs];
+    }
+
+    // 3. Grid Row Allocation (Collision Avoidance)
+    const rows = []; // rows[rowIndex] = array of {startCol, endCol}
+    
+    // Sort events: start date asc, then duration desc
+    const sortedEvents = [...rawTimelineEvents].sort((a, b) => {
+      const aStart = (a.startYear - 2024) * 12 + a.startMonth;
+      const bStart = (b.startYear - 2024) * 12 + b.startMonth;
+      if (aStart !== bStart) return aStart - bStart;
+      const aDur = ((a.endYear - 2024) * 12 + a.endMonth) - aStart;
+      const bDur = ((b.endYear - 2024) * 12 + b.endMonth) - bStart;
+      return bDur - aDur;
+    });
+
+    const eventRenderData = sortedEvents.map(e => {
+      const startAbs = (e.startYear - 2024) * 12 + e.startMonth;
+      const endAbs = (e.endYear - 2024) * 12 + e.endMonth;
+      const startCol = absToGridCol[startAbs];
+      const endCol = absToGridCol[endAbs];
+
+      // Find an empty row
+      let placedRow = -1;
+      for (let r = 0; r < rows.length; r++) {
+        let overlap = false;
+        for (let item of rows[r]) {
+          // Two ranges [start1, end1] and [start2, end2] overlap if start1 <= end2 AND start2 <= end1
+          if (startCol <= item.endCol && item.startCol <= endCol) {
+            overlap = true;
+            break;
+          }
+        }
+        if (!overlap) {
+          placedRow = r;
+          break;
+        }
+      }
       
+      if (placedRow === -1) {
+        placedRow = rows.length;
+        rows.push([]);
+      }
+      rows[placedRow].push({ startCol, endCol });
+
       return {
         ...e,
-        renderStartIdx: Math.max(0, Math.min(nodeCount - 1, eStartAbs - startAbs)),
-        renderEndIdx: Math.max(0, Math.min(nodeCount - 1, eEndAbs - startAbs))
+        startCol,
+        endCol,
+        gridRow: placedRow + 3 // +3 because row 1 is Top Header, row 2 is Month Header
       };
     });
+
+    // 4. Build HTML
+    // Set grid columns (160px per month) and rows
+    const totalRows = rows.length + 2;
+    ganttContainer.style.gridTemplateColumns = `repeat(${nodeCount}, 160px)`;
+    ganttContainer.style.gridTemplateRows = `40px 40px repeat(${rows.length}, minmax(54px, auto))`;
+
+    let html = '';
+
+    // A. Top Headers (Sudah Terlaksana & Belum Terlaksana)
+    if (splitColIdx > 1) {
+      html += `<div class="gantt-header-top terlaksana" style="grid-column: 1 / ${splitColIdx}; grid-row: 1;">SUDAH TERLAKSANA</div>`;
+    }
+    if (splitColIdx <= nodeCount) {
+      html += `<div class="gantt-header-top belum" style="grid-column: ${splitColIdx} / ${nodeCount + 1}; grid-row: 1;">BELUM TERLAKSANA</div>`;
+    }
+
+    // B. Month Headers
+    sortedActiveAbsIndices.forEach((abs, i) => {
+      const y = Math.floor(abs / 12) + 2024;
+      const m = abs % 12;
+      const label = `${MONTH_NAMES[m]} '${y.toString().substring(2)}`;
+      const col = i + 1;
+      
+      html += `<div class="gantt-header-month" style="grid-column: ${col} / ${col + 1}; grid-row: 2;">${label}</div>`;
+      
+      // Vertical dashed lines for the entire grid
+      html += `<div class="gantt-cell" style="grid-column: ${col} / ${col + 1}; grid-row: 3 / ${totalRows + 1};"></div>`;
+    });
+
+    // C. Event Cards
+    eventRenderData.forEach(ev => {
+      const cls = ev.isTerlaksana ? 'terlaksana' : 'akan';
+      
+      // Update stats badge
+      const tooltipData = encodeURIComponent(JSON.stringify(ev));
+      html += `
+        <div class="gantt-event-card ${cls}" style="grid-column: ${ev.startCol} / ${ev.endCol + 1}; grid-row: ${ev.gridRow};" onclick="showTooltip('${tooltipData}', event)">
+          ${ev.nama}
+        </div>
+      `;
+    });
+
+    ganttContainer.innerHTML = html;
 
     // Update Stats Badge
     const statsBadge = document.getElementById('event-stats-badge');
     if (statsBadge) {
-      const terlaksana = filteredEvents.filter(e => e.isTerlaksana).length;
-      statsBadge.textContent = `${filteredEvents.length} Event (${terlaksana} Terlaksana, ${filteredEvents.length - terlaksana} Akan Datang)`;
+      const terlaksana = rawTimelineEvents.filter(e => e.isTerlaksana).length;
+      statsBadge.textContent = `${rawTimelineEvents.length} Event (${terlaksana} Terlaksana, ${rawTimelineEvents.length - terlaksana} Akan Datang)`;
     }
-
-    // Build Axis Nodes HTML
-    let axisHTML = '';
-
-    for (let i = 0; i < nodeCount; i++) {
-      const leftPct = (i / (nodeCount - 1)) * 100;
-      axisHTML += `
-        <div class="axis-node" style="position: absolute; left: ${leftPct}%; top: 50%; transform: translate(-50%, -50%);" data-month="${i}">
-          <div class="axis-label" style="font-size: 0.65rem; white-space: nowrap; transform: rotate(-45deg); margin-top: 10px; margin-left: -5px; text-align: right;">${timelineMonths[i].label}</div>
-        </div>
-      `;
-    }
-
-    // Group single events by render index to prevent overlap ("bertumpuk")
-    const pointEvents = filteredEvents.filter(e => !e.isRange);
-    const monthGroups = {};
-    pointEvents.forEach(ev => {
-      if (!monthGroups[ev.renderStartIdx]) monthGroups[ev.renderStartIdx] = [];
-      monthGroups[ev.renderStartIdx].push(ev);
-    });
-
-    const baseHeights = [90, 140, 190]; // 50px staggering for adjacent months
-    const stackStep = 150; // 3 * 50px = 150px stack step ensures perfect non-overlapping grid
-
-    let maxConnectorHeight = 0;
-
-    pointEvents.forEach(ev => {
-      const mIdx = ev.renderStartIdx;
-      const group = monthGroups[mIdx];
-      const groupIdx = group.indexOf(ev);
-      
-      let leftPct = (mIdx / (nodeCount - 1)) * 100;
-      
-      const baseTier = mIdx % 3;
-      const connectorHeight = baseHeights[baseTier] + (groupIdx * stackStep);
-
-      if (connectorHeight > maxConnectorHeight) {
-        maxConnectorHeight = connectorHeight;
-      }
-
-      const badgeCls = ev.isTerlaksana ? 'terlaksana' : 'akan';
-
-      axisHTML += `
-        <div class="event-pin" style="left: ${leftPct}%; bottom: 6px;" onclick="showTooltip('${encodeURIComponent(JSON.stringify(ev))}', event)">
-          <div class="pin-badge ${badgeCls}">
-            <div class="pin-date">${ev.waktu}</div>
-            <div class="pin-title">${ev.nama}</div>
-          </div>
-          <div class="pin-shape"></div>
-          <div class="pin-connector" style="height: ${connectorHeight}px;"></div>
-        </div>
-      `;
-    });
-
-    // Dynamically adjust margin-top so tall stacks don't overflow
-    const requiredMarginTop = Math.max(380, maxConnectorHeight + 80);
-    const axisWrapper = document.getElementById('axis-wrapper');
-    if (axisWrapper) axisWrapper.style.marginTop = requiredMarginTop + 'px';
-
-    // Range Events (Rendered Below Axis)
-    const rangeEvents = filteredEvents.filter(e => e.isRange);
-    let rangeTopOffset = 65; // Push down to avoid overlapping with slanted axis labels
-
-    rangeEvents.forEach(ev => {
-      const startPct = (ev.renderStartIdx / (nodeCount - 1)) * 100;
-      const endPct = (ev.renderEndIdx / (nodeCount - 1)) * 100;
-      const widthPct = Math.max(3, endPct - startPct);
-
-      axisHTML += `
-        <div class="range-bar-item" style="left: ${startPct}%; width: ${widthPct}%; top: ${rangeTopOffset}px;" onclick="showTooltip('${encodeURIComponent(JSON.stringify(ev))}', event)">
-          <div class="range-dot"></div>
-          <div class="range-text">${ev.nama} (${ev.waktu})</div>
-          <div class="range-dot"></div>
-        </div>
-      `;
-
-      rangeTopOffset += 42; // Stack downward for multiple range bars (taller box + gap)
-    });
-
-    axisContainer.innerHTML = axisHTML;
   }
 
   window.showTooltip = function(jsonStr, event) {

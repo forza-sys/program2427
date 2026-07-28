@@ -83,155 +83,77 @@
       position: relative;
     }
 
-    /* Horizontal Axis Line Component */
-    .axis-container {
+    /* Gantt Chart Component */
+    .gantt-grid {
+      display: grid;
       position: relative;
-      margin: 380px 20px 150px 20px;
-    }
-
-    .axis-line {
-      height: 6px;
-      background: linear-gradient(90deg, #93c5fd 0%, #3b82f6 50%, #10b981 100%);
-      border-radius: 3px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .axis-node {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
       background: #ffffff;
-      border: 4px solid #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-      position: relative;
-      z-index: 2;
-      transition: transform 0.2s ease;
-      cursor: pointer;
+      min-width: 1400px;
     }
-    .axis-node:hover {
-      transform: scale(1.3);
-      border-color: #10b981;
-    }
-
-    .axis-label {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #64748b;
-      white-space: nowrap;
-    }
-
-    /* Event Pins (Above Axis) */
-    .event-pin {
-      position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
+    .gantt-header-top {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      z-index: 10;
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 14px;
+      letter-spacing: 1px;
     }
-    .event-pin:hover {
-      transform: translateX(-50%) translateY(-4px) scale(1.05);
+    .gantt-header-top.terlaksana {
+      background: #2563eb; /* Blue for Sudah Terlaksana */
+      border-radius: 8px 0 0 0;
+    }
+    .gantt-header-top.belum {
+      background: #3b82f6; /* Lighter Blue for Belum Terlaksana */
+      border-radius: 0 8px 0 0;
+    }
+    .gantt-header-month {
+      text-align: center;
+      padding: 10px 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      border-right: 1px solid #e2e8f0;
+      border-bottom: 2px solid #cbd5e1;
+      background: #f8fafc;
+    }
+    .gantt-cell {
+      border-right: 1px dashed #e2e8f0;
+      border-bottom: 1px solid #f8fafc;
+      min-height: 54px;
+    }
+    .gantt-event-card {
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin: 6px 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      cursor: pointer;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      position: relative;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+    .gantt-event-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       z-index: 20;
     }
-
-    .pin-connector {
-      width: 2px;
-      background: #8b5cf6;
-      margin-top: 4px;
+    .gantt-event-card.terlaksana {
+      background: #e0e7ff;
+      border-left: 4px solid #6366f1;
+      color: #3730a3;
+    }
+    .gantt-event-card.akan {
+      background: #f1f5f9;
+      border-left: 4px solid #94a3b8;
+      color: #475569;
     }
 
-    .pin-badge {
-      background: #ffffff;
-      border: 1.5px solid #8b5cf6;
-      border-radius: 10px;
-      padding: 6px 10px;
-      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.15);
-      text-align: center;
-      white-space: nowrap;
-    }
-    .pin-badge.terlaksana {
-      border-color: #8b5cf6;
-    }
-    .pin-badge.akan {
-      border-color: #3b82f6;
-    }
-
-    .pin-date {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #8b5cf6;
-      text-transform: uppercase;
-    }
-    .pin-badge.akan .pin-date {
-      color: #3b82f6;
-    }
-
-    .pin-title {
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: #1e293b;
-      margin-top: 2px;
-    }
-
-    .pin-shape {
-      width: 10px;
-      height: 10px;
-      background: #8b5cf6;
-      transform: rotate(45deg);
-      margin-bottom: -5px;
-    }
-    .pin-badge.akan + .pin-shape {
-      background: #3b82f6;
-    }
-
-    /* Range Bars (Below Axis) */
-    .range-bar-item {
-      position: absolute;
-      top: 48px;
-      height: 34px;
-      border-radius: 17px;
-      background: rgba(139, 92, 246, 0.12);
-      border: 1.5px solid #8b5cf6;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10px;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      z-index: 5;
-    }
-    .range-bar-item:hover {
-      background: rgba(139, 92, 246, 0.22);
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-    }
-    .range-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #8b5cf6;
-    }
-
-    .range-text {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #1e293b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin: 0 8px;
-    }
 
     /* Legend Box at Bottom */
     .timeline-legend {
@@ -285,43 +207,22 @@
           <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px; margin-bottom: 0;">Visualisasi Alur & Jadwal Event Besar Forum Zakat 2024 - 2027</p>
         </div>
 
-        <!-- Status Selector Tabs -->
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="status-tab-btn active" data-status="TERLAKSANA">Sudah Terlaksana</button>
-          <button class="status-tab-btn" data-status="BELUM">Belum Terlaksana</button>
+        <!-- Gantt Diagram Workspace -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <h2 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Agile Timeline (Gantt Chart)</h2>
+          <div id="event-stats-badge" style="font-size: 0.8rem; font-weight: 600; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
+            Memuat data diagram...
+          </div>
         </div>
       </div>
 
       <!-- Main Diagram Canvas Workspace -->
       <div class="timeline-workspace">
         <div class="timeline-canvas-card">
-          <!-- Active Status Info -->
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-              <span style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px;">STATUS TERPILIH</span>
-              <h2 id="active-status-display" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0;">Sudah Terlaksana</h2>
-            </div>
-            <div id="event-stats-badge" style="font-size: 0.8rem; font-weight: 600; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
-              Memuat data diagram...
-            </div>
-          </div>
-
-          <!-- Dynamic Tooltip Details -->
-          <div id="event-tooltip" class="event-tooltip">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
-              <span id="tooltip-date" style="font-size: 0.7rem; font-weight: 700; color: #8b5cf6;">-</span>
-              <button onclick="document.getElementById('event-tooltip').style.display='none'" style="border: none; background: none; cursor: pointer; color: #94a3b8; font-size: 1rem;">&times;</button>
-            </div>
-            <h4 id="tooltip-title" style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">-</h4>
-            <div id="tooltip-status" style="font-size: 0.7rem; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px;">-</div>
-            <div id="tooltip-desc" style="font-size: 0.75rem; color: #64748b;">-</div>
-          </div>
-
-          <!-- Horizontal Timeline Diagram Component -->
-          <div id="axis-wrapper" class="axis-container">
-            <div class="axis-line" id="axis-nodes-container">
-              <!-- Rendered via JS -->
-            </div>
+          <div id="gantt-wrapper" style="overflow-x: auto; padding-bottom: 20px;">
+             <div id="gantt-container" class="gantt-grid">
+                <!-- Rendered by JS -->
+             </div>
           </div>
 
           <!-- Legend Footer -->
@@ -348,6 +249,6 @@
   </main>
 
   <script src="../sidebar.js"></script>
-  <script src="./timeline.js?v=3"></script>
+  <script src="./timeline.js?v=4"></script>
 </body>
 </html>
