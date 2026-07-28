@@ -24,14 +24,11 @@
       box-sizing: border-box;
     }
 
-    .timeline-header-bar {
-      padding: 16px 28px;
-      background: var(--card-bg, #ffffff);
-      border-bottom: 1.5px solid var(--border-color, #e2e8f0);
+    .timeline-page-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
     }
 
     .status-tab-btn {
@@ -205,18 +202,15 @@
   <main class="main-content expanded" style="padding: 0; height: 100vh; overflow: hidden;">
     <div class="timeline-page-container">
       <!-- Top Bar -->
-      <div class="timeline-header-bar">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 36px 0 36px; flex-shrink: 0;">
         <div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <h1 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0;">Diagram Timeline & Roadmap Event FOZ</h1>
-            <span style="font-size: 0.7rem; font-weight: 700; background: #8b5cf6; color: #fff; padding: 2px 8px; border-radius: 8px;">BENCHMARK DIAGRAM</span>
-          </div>
-          <p style="font-size: 0.8rem; color: #64748b; margin-top: 2px; margin-bottom: 0;">Visualisasi Alur & Jadwal Event Besar Forum Zakat 2024 - 2027</p>
+          <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--heading-color, #111827); margin: 0;">Diagram Timeline & Roadmap Event FOZ</h1>
+          <p style="font-size: 0.88rem; color: #6b7280; margin-top: 4px; margin-bottom: 0;">Visualisasi Alur & Jadwal Event Besar Forum Zakat 2024-2027</p>
         </div>
 
         <!-- Gantt Diagram Workspace -->
         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
-          <div id="event-stats-badge" style="font-size: 0.8rem; font-weight: 600; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 8px;">
+          <div id="event-stats-badge" style="font-size: 0.8rem; font-weight: 600; color: #475569; background: #ffffff; border: 1px solid #e5e7eb; padding: 8px 14px; border-radius: 8px;">
             Memuat data diagram...
           </div>
         </div>
