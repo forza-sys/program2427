@@ -74,7 +74,6 @@
             menuHTML = `
                 <ul class="sidebar-menu">
                     <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
-                    <li><a href="${base}monitoring-program/laporan-bidang-4.html"><i class="ph-light ph-list-numbers"></i> <span>Laporan Bidang IV</span></a></li>
                     <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
                 </ul>
             `;
@@ -182,7 +181,6 @@
                                     oldScript.src.includes('psak45.js') || 
                                     oldScript.src.includes('nota-dinas.js') ||
                                     oldScript.src.includes('program.js') ||
-                                    oldScript.src.includes('laporan-bidang-4.js') ||
                                     oldScript.src.includes('timeline.js')) {
                                     scriptsToLoad.push(oldScript.src);
                                 }
