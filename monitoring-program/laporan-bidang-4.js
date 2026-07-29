@@ -241,6 +241,44 @@
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('search-program-input')?.addEventListener('input', renderAll);
     document.getElementById('status-filter-select')?.addEventListener('change', renderAll);
+    
+    // Download as Image functionality
+    const downloadBtn = document.getElementById('btn-download-img');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', () => {
+        const originalText = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = '<i class="ph-light ph-spinner spinner-rotate"></i> Memproses...';
+        downloadBtn.disabled = true;
+        
+        // Hide the download button during capture so it doesn't appear in the image
+        downloadBtn.style.display = 'none';
+
+        html2canvas(document.querySelector("main"), {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#f8fafc'
+        }).then(canvas => {
+          downloadBtn.style.display = 'flex';
+          downloadBtn.innerHTML = originalText;
+          downloadBtn.disabled = false;
+          
+          const imgData = canvas.toDataURL('image/jpeg', 0.9);
+          const link = document.createElement('a');
+          link.href = imgData;
+          link.download = 'Laporan_Bidang_4.jpg';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }).catch(err => {
+          console.error("Gagal mendownload gambar", err);
+          downloadBtn.style.display = 'flex';
+          downloadBtn.innerHTML = originalText;
+          downloadBtn.disabled = false;
+          alert("Gagal mendownload gambar.");
+        });
+      });
+    }
+
     loadData();
   });
 
