@@ -319,7 +319,17 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.parsed;
+                  const totalCount = filteredData.length;
+                  const pct = totalCount > 0 ? Math.round((val / totalCount) * 100) : 0;
+                  return ' ' + val + ' (' + pct + '%)';
+                }
+              }
+            }
           },
           cutout: '65%'
         }
