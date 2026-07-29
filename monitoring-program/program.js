@@ -202,7 +202,7 @@
     const elSelesaiPct = document.getElementById('kpi-selesai-pct');
     if (elSelesaiPct) {
         if (munasTotal > 0) {
-            elSelesaiPct.textContent = munasSelesai + ' Program • ' + Math.round((munasSelesai / munasTotal) * 100) + '% dari total Mandat Munas';
+            elSelesaiPct.textContent = munasSelesai + ' Mandat Munas. ' + Math.round((munasSelesai / munasTotal) * 100) + '% selesai.';
         } else {
             elSelesaiPct.textContent = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
         }
@@ -213,7 +213,7 @@
     const elProcessPct = document.getElementById('kpi-process-pct');
     if (elProcessPct) {
         if (munasTotal > 0) {
-            elProcessPct.textContent = munasProcess + ' Program • ' + Math.round((munasProcess / munasTotal) * 100) + '% dari total Mandat Munas';
+            elProcessPct.textContent = munasProcess + ' Mandat Munas. ' + Math.round((munasProcess / munasTotal) * 100) + '% on process.';
         } else {
             elProcessPct.textContent = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
         }
@@ -224,7 +224,7 @@
     const elRencanaPct = document.getElementById('kpi-rencana-pct');
     if (elRencanaPct) {
         if (munasTotal > 0) {
-            elRencanaPct.textContent = munasRencana + ' Program • ' + Math.round((munasRencana / munasTotal) * 100) + '% dari total Mandat Munas';
+            elRencanaPct.textContent = munasRencana + ' Mandat Munas. ' + Math.round((munasRencana / munasTotal) * 100) + '% direncanakan.';
         } else {
             elRencanaPct.textContent = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
         }
