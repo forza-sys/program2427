@@ -201,27 +201,33 @@
     if (elSelesai) elSelesai.textContent = selesaiCount;
     const elSelesaiPct = document.getElementById('kpi-selesai-pct');
     if (elSelesaiPct) {
-        let text = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasSelesai / munasTotal) * 100)}% dari total Mandat`;
-        elSelesaiPct.textContent = text;
+        if (munasTotal > 0) {
+            elSelesaiPct.textContent = Math.round((munasSelesai / munasTotal) * 100) + '% dari total Mandat';
+        } else {
+            elSelesaiPct.textContent = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
+        }
     }
 
     const elProcess = document.getElementById('kpi-process-proker');
     if (elProcess) elProcess.textContent = processCount;
     const elProcessPct = document.getElementById('kpi-process-pct');
     if (elProcessPct) {
-        let text = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasProcess / munasTotal) * 100)}% dari total Mandat`;
-        elProcessPct.textContent = text;
+        if (munasTotal > 0) {
+            elProcessPct.textContent = Math.round((munasProcess / munasTotal) * 100) + '% dari total Mandat';
+        } else {
+            elProcessPct.textContent = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
+        }
     }
 
     const elRencana = document.getElementById('kpi-rencana-proker');
     if (elRencana) elRencana.textContent = rencanaCount;
     const elRencanaPct = document.getElementById('kpi-rencana-pct');
     if (elRencanaPct) {
-        let text = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasRencana / munasTotal) * 100)}% dari total Mandat`;
-        elRencanaPct.textContent = text;
+        if (munasTotal > 0) {
+            elRencanaPct.textContent = Math.round((munasRencana / munasTotal) * 100) + '% dari total Mandat';
+        } else {
+            elRencanaPct.textContent = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
+        }
     }
 
     const elAvg = document.getElementById('kpi-avg-progress');
