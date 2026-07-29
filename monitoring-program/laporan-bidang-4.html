@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Turunan Bidang 4 — HAZANA FOZ</title>
+  <link rel="stylesheet" href="../dashboard-keuangan-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .cat-tab-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border-color, #e5e7eb);
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #374151);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .cat-tab-btn:hover {
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .cat-tab-btn.active {
+      background: #10b981;
+      border-color: #10b981;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Modern KPI Cards */
+    .kpi-strip {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-bottom: 24px;
+    }
+    .kpi-modern {
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+    .kpi-modern.primary {
+      background: #10b981; /* Green matching sidebar */
+      color: white;
+      border: none;
+    }
+    .kpi-modern.secondary {
+      background: white;
+      border: 1.5px solid #f1f5f9;
+      color: #1e293b;
+    }
+    .kpi-modern-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .kpi-modern-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .kpi-modern.secondary .kpi-modern-title {
+      color: #475569;
+    }
+    .kpi-modern.primary .kpi-modern-title {
+      color: rgba(255,255,255,0.9);
+    }
+    .kpi-modern-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .kpi-modern.primary .kpi-modern-icon {
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+    }
+    .kpi-modern.secondary .kpi-modern-icon {
+      border: 1px solid #e2e8f0;
+      color: #94a3b8;
+    }
+    .kpi-modern-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .kpi-modern.secondary .kpi-modern-value {
+      color: #1e1b4b; /* Very dark blue */
+    }
+    .kpi-modern-sub {
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+    .kpi-modern.primary .kpi-modern-sub {
+      color: rgba(255,255,255,0.8);
+    }
+    .kpi-modern.secondary .kpi-modern-sub {
+      color: #94a3b8;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .status-selesai { background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-process { background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-direncanakan { background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-belum { background: rgba(107, 114, 128, 0.15); color: #4b5563; border: 1px solid rgba(107, 114, 128, 0.3); }
+    
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(229, 231, 235, 0.8);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .program-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--border-color, #e5e7eb);
+      border-radius: 14px;
+      padding: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .program-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar-container"></div>
+
+  <main class="main-content expanded">
+    <div style="padding: 24px;">
+      <!-- Page Header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--heading-color, #111827); margin: 0;">Laporan Turunan Bidang IV</h1>
+          <p style="font-size: 0.88rem; color: #6b7280; margin-top: 4px; margin-bottom: 0;">Rekapitalisasi real-time pencapaian Turunan Program Bidang IV</p>
+        </div>
+      </div>
+
+      <!-- KPI Overview Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-modern primary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Total Program</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-folder-open"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-total-proker">0</div>
+          <div class="kpi-modern-sub" style="display: flex; align-items: center; gap: 6px;">
+            <span style="background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; font-weight: 600;"><i class="ph-light ph-arrows-clockwise"></i> Update</span> Data terkini
+          </div>
+        </div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Selesai</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-check-circle"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-selesai-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-selesai-pct">0% dari total</div>
+        </div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">On Process</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-spinner-gap"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-process-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-process-pct">0% dari total</div>
+        </div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Direncanakan</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-calendar-blank"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-rencana-proker">0</div>
+          <div class="kpi-modern-sub" id="kpi-rencana-pct">0% dari total</div>
+        </div>
+
+        <div class="kpi-modern secondary">
+          <div class="kpi-modern-header">
+            <div class="kpi-modern-title">Rata-rata Capaian</div>
+            <div class="kpi-modern-icon"><i class="ph-light ph-trend-up"></i></div>
+          </div>
+          <div class="kpi-modern-value" id="kpi-avg-progress">0%</div>
+          <div class="kpi-modern-sub" style="color: #10b981; font-weight: 600;">Persentase Keseluruhan</div>
+        </div>
+      </div>
+
+      <!-- Top Charts Layer -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 24px;">
+        <!-- Chart 1: Status Distribution -->
+        <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i class="ph-light ph-chart-pie-slice" style="color: #10b981;"></i> Distribusi Status Program
+          </h3>
+          <div style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center;">
+            <canvas id="statusDonutChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Capaian per Bidang -->
+        <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i class="ph-light ph-chart-bar" style="color: #3b82f6;"></i> Jumlah Program per Bidang
+          </h3>
+          <div style="position: relative; height: 220px;">
+            <canvas id="bidangBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Categories Bar Removed -->
+
+      <!-- Main Layout: Search & Program List -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div style="position: relative; flex: 1; min-width: 200px;">
+            <i class="ph-light ph-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+            <input type="text" id="search-program-input" placeholder="Cari nama program, acuan, keterangan..." style="width: 100%; padding: 9px 12px 9px 36px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
+          </div>
+          <select id="status-filter-select" style="padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
+            <option value="ALL">Semua Status</option>
+            <option value="Selesai">Selesai</option>
+            <option value="On Process">On Process</option>
+            <option value="Direncanakan">Direncanakan</option>
+            <option value="Belum Terdefinisi">Belum Terdefinisi</option>
+          </select>
+        </div>
+
+        <!-- Cards List (Single Column) -->
+        <div id="program-cards-list" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+          <div style="text-align: center; padding: 40px; color: #9ca3af;">
+            <i class="ph-light ph-spinner spinner-rotate" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+            Memuat data program kerja dari Google Sheets...
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../sidebar.js"></script>
+  <script src="./laporan-bidang-4.js?v=1"></script>
+</body>
+</html>
