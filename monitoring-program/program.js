@@ -202,7 +202,7 @@
     const elSelesaiPct = document.getElementById('kpi-selesai-pct');
     if (elSelesaiPct) {
         let text = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasSelesai / munasTotal) * 100)}% Mandat`;
+        if (munasTotal > 0) text += ` • ${Math.round((munasSelesai / munasTotal) * 100)}% dari total Mandat`;
         elSelesaiPct.textContent = text;
     }
 
@@ -211,7 +211,7 @@
     const elProcessPct = document.getElementById('kpi-process-pct');
     if (elProcessPct) {
         let text = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasProcess / munasTotal) * 100)}% Mandat`;
+        if (munasTotal > 0) text += ` • ${Math.round((munasProcess / munasTotal) * 100)}% dari total Mandat`;
         elProcessPct.textContent = text;
     }
 
@@ -220,7 +220,7 @@
     const elRencanaPct = document.getElementById('kpi-rencana-pct');
     if (elRencanaPct) {
         let text = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
-        if (munasTotal > 0) text += ` • ${Math.round((munasRencana / munasTotal) * 100)}% Mandat`;
+        if (munasTotal > 0) text += ` • ${Math.round((munasRencana / munasTotal) * 100)}% dari total Mandat`;
         elRencanaPct.textContent = text;
     }
 
