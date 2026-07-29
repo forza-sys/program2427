@@ -156,11 +156,29 @@
     let totalPct = 0;
     let pctCount = 0;
 
+    let munasTotal = 0;
+    let munasSelesai = 0;
+    let munasProcess = 0;
+    let munasRencana = 0;
+
     filteredData.forEach(p => {
       const st = p.status.toLowerCase();
-      if (st.includes('selesai') || st.includes('berjalan')) selesaiCount++;
-      else if (st.includes('process') || st.includes('proses')) processCount++;
-      else if (st.includes('rencana') || st.includes('direncanakan')) rencanaCount++;
+      const isMunas = (p.acuan || '').toLowerCase().includes('mandat munas');
+      
+      if (isMunas) munasTotal++;
+
+      if (st.includes('selesai') || st.includes('berjalan')) {
+        selesaiCount++;
+        if (isMunas) munasSelesai++;
+      }
+      else if (st.includes('process') || st.includes('proses')) {
+        processCount++;
+        if (isMunas) munasProcess++;
+      }
+      else if (st.includes('rencana') || st.includes('direncanakan')) {
+        rencanaCount++;
+        if (isMunas) munasRencana++;
+      }
 
       if (p.pct !== null) {
         totalPct += p.pct;
@@ -173,20 +191,38 @@
     const elTotal = document.getElementById('kpi-total-proker');
     if (elTotal) elTotal.textContent = total;
 
+    const munasTotalText = munasTotal > 0 ? ` (${munasTotal} Mandat Munas)` : '';
+    const elTotalSub = document.querySelector('#kpi-total-proker + .kpi-modern-sub');
+    if (elTotalSub && munasTotal > 0) {
+      elTotalSub.innerHTML = `<span style="background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 4px; font-weight: 600;"><i class="ph-light ph-arrows-clockwise"></i> Update</span> &nbsp;${munasTotal} Mandat Munas`;
+    }
+
     const elSelesai = document.getElementById('kpi-selesai-proker');
     if (elSelesai) elSelesai.textContent = selesaiCount;
     const elSelesaiPct = document.getElementById('kpi-selesai-pct');
-    if (elSelesaiPct) elSelesaiPct.textContent = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
+    if (elSelesaiPct) {
+        let text = total > 0 ? Math.round((selesaiCount / total) * 100) + '% dari total' : '0%';
+        if (munasTotal > 0) text += ` • ${Math.round((munasSelesai / munasTotal) * 100)}% Mandat`;
+        elSelesaiPct.textContent = text;
+    }
 
     const elProcess = document.getElementById('kpi-process-proker');
     if (elProcess) elProcess.textContent = processCount;
     const elProcessPct = document.getElementById('kpi-process-pct');
-    if (elProcessPct) elProcessPct.textContent = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
+    if (elProcessPct) {
+        let text = total > 0 ? Math.round((processCount / total) * 100) + '% dari total' : '0%';
+        if (munasTotal > 0) text += ` • ${Math.round((munasProcess / munasTotal) * 100)}% Mandat`;
+        elProcessPct.textContent = text;
+    }
 
     const elRencana = document.getElementById('kpi-rencana-proker');
     if (elRencana) elRencana.textContent = rencanaCount;
     const elRencanaPct = document.getElementById('kpi-rencana-pct');
-    if (elRencanaPct) elRencanaPct.textContent = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
+    if (elRencanaPct) {
+        let text = total > 0 ? Math.round((rencanaCount / total) * 100) + '% dari total' : '0%';
+        if (munasTotal > 0) text += ` • ${Math.round((munasRencana / munasTotal) * 100)}% Mandat`;
+        elRencanaPct.textContent = text;
+    }
 
     const elAvg = document.getElementById('kpi-avg-progress');
     if (elAvg) elAvg.textContent = avgPct + '%';
